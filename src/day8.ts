@@ -37,13 +37,13 @@ const rowColCounter = (map:Array<string>,counter:mapCounter, x:number, y:number,
 }
 
 const dirScorer = (map:Array<string>, x:number, y:number, dx:number, dy:number, xbound:number, ybound:number):number=>{
-  let h = parseInt(map[x][y])
+  let h = parseInt(map[y][x])
   x+=dx
   y+=dy
   let s = 0
   while(x >= 0 && y >= 0 && x<xbound && y<ybound){
     s++
-    let c = parseInt(map[x][y])
+    let c = parseInt(map[y][x])
     if (c >= h){
       return s
     }
@@ -73,7 +73,7 @@ const day8A = async():Promise<number>=>{
 }
 
 const day8B = async():Promise<number>=>{
-  return readFile("./input/day8-test.txt").then((buffer)=>{
+  return readFile("./input/day8.txt").then((buffer)=>{
     const lines = buffer.toString().split(/\r?\n/)
     const xbound = lines[0].length
     const ybound = lines.length
@@ -81,11 +81,14 @@ const day8B = async():Promise<number>=>{
 
     for (let x = 0; x < xbound-1; x++){
       for (let y = 0; y < ybound-1; y++){
-        const score = (dirScorer(lines,x,y,1,0,xbound,ybound) *
-          dirScorer(lines,x,y,-1,0,xbound,ybound) *
-          dirScorer(lines,x,y,0,1,xbound,ybound) *
-          dirScorer(lines,x,y,0,-1,xbound,ybound))  
-          best = score > best ? score : best
+          
+        
+        const right = dirScorer(lines,x,y,1,0,xbound,ybound) 
+        const left = dirScorer(lines,x,y,-1,0,xbound,ybound)
+        const down = dirScorer(lines,x,y,0,1,xbound,ybound) 
+        const up = dirScorer(lines,x,y,0,-1,xbound,ybound) 
+        const score = up * right * down *left 
+        best = score > best ? score : best
       }
     }
     return best
