@@ -53,9 +53,9 @@ const dirScorer = (map:Array<string>, x:number, y:number, dx:number, dy:number, 
   return s
 }
 
-const day8A = async():Promise<number>=>{
+export const day8A = async():Promise<number>=>{
   return readFile("./input/day8.txt").then((buffer)=>{
-    const lines = buffer.toString().split(/\r?\n/)
+    const lines = buffer.toString().split(/\r?\n/).filter(l=>l.length > 0)
     const xbound = lines[0].length
     const ybound = lines.length
     const counter = new mapCounter(xbound, ybound)
@@ -72,22 +72,23 @@ const day8A = async():Promise<number>=>{
   }) 
 }
 
-const day8B = async():Promise<number>=>{
+export const day8B = async():Promise<number>=>{
   return readFile("./input/day8.txt").then((buffer)=>{
-    const lines = buffer.toString().split(/\r?\n/)
+    const lines = buffer.toString().split(/\r?\n/).filter(l=>l.length > 0)
     const xbound = lines[0].length
     const ybound = lines.length
     let best = 0
 
-    for (let x = 0; x < xbound-1; x++){
-      for (let y = 0; y < ybound-1; y++){
-          
-        
-        const right = dirScorer(lines,x,y,1,0,xbound,ybound) 
-        const left = dirScorer(lines,x,y,-1,0,xbound,ybound)
-        const down = dirScorer(lines,x,y,0,1,xbound,ybound) 
-        const up = dirScorer(lines,x,y,0,-1,xbound,ybound) 
-        const score = up * right * down *left 
+    for (let x = 1; x < xbound-1; x++){
+      for (let y = 1; y < ybound-1; y++){
+        const cardinals = [  
+          dirScorer(lines,x,y,0,-1,xbound,ybound), //up 
+          dirScorer(lines,x,y,1,0,xbound,ybound), //right
+          dirScorer(lines,x,y,0,1,xbound,ybound), //down
+          dirScorer(lines,x,y,-1,0,xbound,ybound) //right
+        ]
+
+        const score = cardinals.reduce((p,c)=>p*c)
         best = score > best ? score : best
       }
     }
@@ -97,5 +98,6 @@ const day8B = async():Promise<number>=>{
 
 
 
-day8B().then(r=>console.log(r)) 
+//day8A().then(r=>console.log(r)) 
+//day8B().then(r=>console.log(r)) 
 
